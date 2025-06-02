@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main-content %}
+
+
+
+<div class="container mt-5">
+  <div class="row align-items-center">
+    
+    <!-- Left: Login Form -->
+    <div class="col-md-6">
+      <h2 class="mb-6">Sign In</h2>
+      <form action="#">
+        <div class="form-group mb-3">
+          <label for="email">Email</label>
+          <input type="email" class="form-control" placeholder="Enter email">
+        </div>
+        <div class="form-group mb-3">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-primary">Sign In</button>
+      </form>
+    </div>
+
+    <!-- Right: Image and Text -->
+    <div class="col-md-6 text-center">
+      <img src="{% static 'myapp/images/login/Login.webp' %}" alt="Login Image" class="img-fluid " style="max-width: 250px;">
+      <h3>Hello, Friend!</h3>
+      <p>Hi, this is the IT Department.
+		Welcome!
+
+		Use this portal to report any technical issues or requests.
+		Let’s get things fixed as quickly as possible.
+
+		If you're a new user, please sign in using your Microsoft account.
+		After submitting your request, kindly wait while our team works on resolving it.
+
+		Thank you for your cooperation!.</p>
+    </div>
+
+  </div>
+</div>
+
+
+<footer>
+	<p>
+		Created with <i class="fa fa-heart"></i> by
+		<a target="_blank" href="https://florin-pop.com">Florin Pop</a>
+		- Read how I created this and how you can join the challenge
+		<a target="_blank" href="https://www.florin-pop.com/blog/2019/03/double-slider-sign-in-up-form/">here</a>.
+	</p>
+</footer>
+{% endblock main-content %}
