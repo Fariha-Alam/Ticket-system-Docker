@@ -6,11 +6,13 @@ from django.contrib import messages
 def home(request):
     return render(request, 'home.html')
 def registration(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Registration successful.")
+            user = form.save()
+            user.first_name = form.cleaned_data['full_name']
+            user.save()
+            messages.success(request, "Account created successfully.")
             return redirect('login')
     else:
         form = SignUpForm()
