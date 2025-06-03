@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block main-content %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +29,7 @@
     }
     .login-wrapper {
       max-width: 900px;
-      height: 700px;
+      height: 800px;
       display: flex;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
       border-radius: 16px;
@@ -55,14 +56,29 @@
       width: 250px;
      
     }
+     @media (max-width: 768px) {
+      .card {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .left-panel, .right-panel {
+        width: 100%;
+        flex: none;
+        padding: 20px;
+      }
+
+      .right-panel img {
+        margin-bottom: 15px;
+      }
   </style>
 </head>
 <body>
-
 <div class="login-wrapper">
+  
   <!-- Left Side (Purple Info Panel) -->
   <div class="left-panel text-center">
-     <h1 class="mb-3" style="font-family: 'Brush Script MT', cursive;">IT Ticket System</h1>
+    <h1 class="mb-3" style="font-family: 'Brush Script MT', cursive;">IT Ticket System</h1>
     <h2 class="mb-3">Welcome!</h2>
     <h4>
       This is the IT Department Portal.<br><br>
@@ -70,48 +86,42 @@
       Please sign in using your Microsoft account.<br><br>
       Thank you!
     </h4>
-   <p class="mt-3 text-center">Dont't have an account? <a href="{% url 'registration' %}">Sign Up</a></p>
-   {% if form.non_field_errors %}
-        {% for error in form.non_field_errors %}
-         <p class="alert alert-danger my-3">{{error}}</p>
-         {% endfor %}
-        {% endif %}
+    <p class="mt-3 text-center">Already have an account? <a href="{% url 'login' %}">Login</a></p>
   </div>
-
+  
   <!-- Right Side (Login Form) -->
   <div class="right-panel">
     <div class="text-center">
       <img src="{% static 'myapp/images/login/Login.png' %}" alt="Logo">
-    
+      
     </div>
-   
-                     {% if messages %}
+         {% if messages %}
                     {% for message in messages %}
-                     <p {% if message.tags%} class="alert alert-{{message.tags}} m-2 mb-2" {% endif %}>{{message}}</P>
+                     <p {% if message.tags%} class="alert alert-{{message.tags}} mb-5" {% endif %}>{{message}}</P>
                     {% endfor %}
                   {% endif %}
                     {% csrf_token %}
                 <form method="post">
                 {% csrf_token %}
                 {% for field in form %}
-                    <div class="mb-3">
+                    <div class="mb-2">
                         {{ field.label_tag }}
                         {{ field }}
                         {% if field.errors %}
-                            <div class="text-danger">{{ field.errors }}</div>
+                            <div class="text-danger" style="min-height: 1.2em;">{{ field.errors }}</div>
                         {% endif %}
                     </div>
                 {% endfor %}
-      <button type="submit" class="btn btn-outline-success">Sign In</button>
-      <div class="text-center mt-3">
-        <a href="#">Forgot Password?</a>
-      </div>
-    </form>
+                    <button type="submit" class="btn btn-outline-success" >Create Account</button>
+                </form>
+                
   </div>
 </div>
 
 </body>
 </html>
+
+
 
 
 <footer>

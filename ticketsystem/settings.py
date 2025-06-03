@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+    'social_django',
     'myapp',
 ]
 
@@ -86,8 +86,12 @@ DATABASES = {
 }"""
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ticket_system_db',
+        'USER': 'root',                  # or your MySQL username
+        'PASSWORD': 'fariha#321',     # use your password
+        'HOST': 'localhost',             # or IP
+        'PORT': '3306',                  # default MySQL port
     }
 }
 

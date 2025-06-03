@@ -98,3 +98,12 @@ input {
 	max-width: 100%;
 	min-height: 700px;
 }
+.form-control {
+  height: 38px; /* Or whatever fits your theme */
+}
+.text-danger {
+  min-height: 1.5em;
+  margin-top: 0.25rem;
+  /* prevent collapsing */
+  display: block;
+}
