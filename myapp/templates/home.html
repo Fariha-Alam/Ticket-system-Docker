@@ -1,2 +1,344 @@
-{% extends 'base.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ticket System Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    :root {
+      --primary-color: #1e1e2f;
+      --accent-color: #4f8cff;
+      --bg-color: #f9fbfc;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --muted-text: #7f8c8d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .navbar {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .user-menu {
+      position: relative;
+    }
+
+    .user-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .user-btn i {
+      font-size: 1rem;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      min-width: 180px;
+      overflow: hidden;
+      z-index: 100;
+    }
+
+    .dropdown-menu a {
+      color: var(--text-color);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .user-menu:hover .dropdown-menu {
+      display: block;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      width: 260px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    .stat-label {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: var(--muted-text);
+    }
+
+    .request-form-container {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      margin: 1rem auto 2rem;
+      padding: 2rem;
+      width: 90%;
+      max-width: 900px;
+    }
+
+    .form-title {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .form-control,
+    .form-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .file-upload {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .file-upload-btn {
+      padding: 0.6rem 1rem;
+      background: #e7eef7;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .file-name {
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .submit-btn {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .submit-btn:hover {
+      background-color: #3d73db;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+
+      .stat-card {
+        width: 90%;
+      }
+      
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+    <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Helvetas</span>
+    <span style="margin-left: 8px;">Ticket System</span>
+    </div>
+    <div class="user-menu">
+      <button class="user-btn">
+        <i class="fas fa-user-circle"></i> Username
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-menu">
+        <a href="#"><i class="fas fa-list"></i> Active Requests</a>
+        <a href="#"><i class="fas fa-user"></i> Request Profile</a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Request Stats -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-number">24</div>
+      <div class="stat-label">Pending Requests</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">156</div>
+      <div class="stat-label">Solved Requests</div>
+    </div>
+  </div>
+
+  <!-- Request Creation Form -->
+  <div class="request-form-container">
+    <h2 class="form-title">Create New Request</h2>
+    <form id="requestForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="requestType">Request Type</label>
+          <select class="form-select" id="requestType" required>
+            <option value="">Select request type...</option>
+            <option value="technical">Technical Issue</option>
+            <option value="hardware">Hardware Problem</option>
+            <option value="software">Software Problem</option>
+            <option value="access">Access Request</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="priority">Priority</label>
+          <select id="priority" class="form-select" required>
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <input type="text" class="form-control" id="subject" required />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Attachments</label>
+        <div class="file-upload">
+          <button type="button" class="file-upload-btn">
+            <i class="fas fa-paperclip"></i> Choose File
+          </button>
+          <span class="file-name">No file chosen</span>
+          <input type="file" id="fileUpload" style="display: none;" />
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-paper-plane"></i> Send Request
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // File upload preview
+    document.querySelector('.file-upload-btn').addEventListener('click', () => {
+      document.getElementById('fileUpload').click();
+    });
+
+    document.getElementById('fileUpload').addEventListener('change', function (e) {
+      const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+      document.querySelector('.file-name').textContent = fileName;
+    });
+
+    // Dummy submit
+    document.getElementById('requestForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      alert('Request submitted!');
+      this.reset();
+      document.querySelector('.file-name').textContent = 'No file chosen';
+    });
+  </script>
+
+</body>
+</html>

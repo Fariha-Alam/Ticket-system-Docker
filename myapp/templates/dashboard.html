@@ -1,0 +1,365 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets | Ticket System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+            :root {
+        --primary-color: #1e1e2f;
+        --accent-color: #4f8cff;
+        --bg-color: #f9fbfc;
+        --card-bg: #ffffff;
+        --text-color: #333;
+        --muted-text: #7f8c8d;
+        }
+
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        }
+
+        .navbar {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+            .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        }
+
+        .user-menu {
+        position: relative;
+        }
+
+        .user-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        }
+
+        .user-btn i {
+        font-size: 1rem;
+        }
+
+        .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background-color: white;
+        border-radius: 6px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        min-width: 180px;
+        overflow: hidden;
+        z-index: 100;
+        }
+
+        .dropdown-menu a {
+        color: var(--text-color);
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        transition: background 0.3s;
+        }
+
+        .dropdown-menu a:hover {
+        background-color: #f0f0f0;
+        }
+
+        .user-menu:hover .dropdown-menu {
+        display: block;
+        }
+
+
+        .tickets-container {
+            display: flex;
+            gap: 30px;
+            padding: 20px;
+        }
+        
+        .ticket-column {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+        }
+        
+        .column-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .ticket-card {
+            background: #f9f9f9;
+            border-left: 4px solid;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .ticket-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .ticket-card.pending {
+            border-left-color: #f39c12;
+        }
+        
+        .ticket-card.solved {
+            border-left-color: #2ecc71;
+        }
+        
+        .ticket-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .ticket-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .ticket-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .status-solved {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .ticket-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .message-btn {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .details-btn {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 70%; /* Adjust based on actual progress */
+            background: linear-gradient(90deg, #ff9800, #f57c00);
+        }
+        
+        .solved .progress-fill {
+            width: 100%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+        }
+        
+        @media (max-width: 768px) {
+            .tickets-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+ <nav class="navbar">
+    <div class="logo">
+    <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Helvetas</span>
+    <span style="margin-left: 8px;">Ticket System</span>
+    </div>
+    <div class="user-menu">
+      <button class="user-btn">
+        <i class="fas fa-user-circle"></i> Username
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-menu">
+        <a href="#"><i class="fas fa-list"></i> Active Requests</a>
+        <a href="#"><i class="fas fa-user"></i> Request Profile</a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+  </nav>
+
+    <!-- Tickets Dashboard -->
+    <div class="tickets-container">
+        <!-- Pending Tickets Column -->
+        <div class="ticket-column">
+            <div class="column-header">
+                <i class="fas fa-clock" style="color: #f39c12;"></i>
+                Pending Tickets
+            </div>
+            
+            <!-- Sample Ticket Card 1 -->
+            <div class="ticket-card pending">
+                <div class="ticket-title">
+                    <span>Printer not working in Office 203</span>
+                    <span class="ticket-status status-pending">
+                        <i class="fas fa-clock"></i> Pending
+                    </span>
+                </div>
+                <div class="ticket-meta">
+                    <span>#TKT-2023-001</span>
+                    <span><i class="far fa-calendar"></i> 15 Nov 2023</span>
+                    <span><i class="fas fa-bolt"></i> Medium</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="ticket-actions">
+                    <button class="action-btn message-btn">
+                        <i class="fas fa-comment"></i> Message
+                    </button>
+                    <button class="action-btn details-btn">
+                        <i class="fas fa-eye"></i> Details
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Sample Ticket Card 2 -->
+            <div class="ticket-card pending">
+                <div class="ticket-title">
+                    <span>Email account access issue</span>
+                    <span class="ticket-status status-pending">
+                        <i class="fas fa-clock"></i> Pending
+                    </span>
+                </div>
+                <div class="ticket-meta">
+                    <span>#TKT-2023-002</span>
+                    <span><i class="far fa-calendar"></i> 16 Nov 2023</span>
+                    <span><i class="fas fa-bolt"></i> High</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 40%;"></div>
+                </div>
+                <div class="ticket-actions">
+                    <button class="action-btn message-btn">
+                        <i class="fas fa-comment"></i> Message
+                    </button>
+                    <button class="action-btn details-btn">
+                        <i class="fas fa-eye"></i> Details
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Solved Tickets Column -->
+        <div class="ticket-column">
+            <div class="column-header">
+                <i class="fas fa-check-circle" style="color: #2ecc71;"></i>
+                Solved Tickets
+            </div>
+            
+            <!-- Sample Solved Ticket -->
+            <div class="ticket-card solved">
+                <div class="ticket-title">
+                    <span>WiFi connection drops frequently</span>
+                    <span class="ticket-status status-solved">
+                        <i class="fas fa-check"></i> Solved
+                    </span>
+                </div>
+                <div class="ticket-meta">
+                    <span>#TKT-2023-003</span>
+                    <span><i class="far fa-calendar"></i> 10 Nov 2023</span>
+                    <span><i class="fas fa-bolt"></i> Medium</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="ticket-actions">
+                    <button class="action-btn message-btn">
+                        <i class="fas fa-comment"></i> Reopen
+                    </button>
+                    <button class="action-btn details-btn">
+                        <i class="fas fa-eye"></i> Details
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactivity
+        document.querySelectorAll('.message-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // In real app, this would open a chat/message modal
+                alert('Messaging feature will open here');
+            });
+        });
+        
+        document.querySelectorAll('.details-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // In real app, this would show full ticket details
+                alert('Ticket details will show here');
+            });
+        });
+    </script>
+</body>
+</html>
