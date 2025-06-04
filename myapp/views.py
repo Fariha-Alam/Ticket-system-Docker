@@ -32,3 +32,9 @@ def login_view(request):
     
 def dashboard(request):
     return render(request, 'dashboard.html')
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html')
+def message_show(request):
+    return render(request, 'message_show.html')
+def logout(request):
+    return render(request, 'login.html')

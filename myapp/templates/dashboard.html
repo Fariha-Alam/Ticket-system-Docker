@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
             :root {
-        --primary-color: #1e1e2f;
+        --primary-color:rgb(74, 74, 184);
         --accent-color: #4f8cff;
         --bg-color: #f9fbfc;
         --card-bg: #ffffff;
@@ -113,7 +113,7 @@
             font-weight: 600;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
+           
             display: flex;
             align-items: center;
             gap: 10px;
@@ -199,8 +199,8 @@
         }
         
         .details-btn {
-            background: #f5f5f5;
-            color: #333;
+            background:rgb(146, 109, 109);
+            color: white;
         }
         
         .progress-bar {
@@ -210,17 +210,7 @@
             margin: 10px 0;
             overflow: hidden;
         }
-        
-        .progress-fill {
-            height: 100%;
-            width: 70%; /* Adjust based on actual progress */
-            background: linear-gradient(90deg, #ff9800, #f57c00);
-        }
-        
-        .solved .progress-fill {
-            width: 100%;
-            background: linear-gradient(90deg, #4caf50, #2e7d32);
-        }
+      
         
         @media (max-width: 768px) {
             .tickets-container {
@@ -270,9 +260,7 @@
                     <span><i class="far fa-calendar"></i> 15 Nov 2023</span>
                     <span><i class="fas fa-bolt"></i> Medium</span>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
+                
                 <div class="ticket-actions">
                     <button class="action-btn message-btn">
                         <i class="fas fa-comment"></i> Message
@@ -296,15 +284,13 @@
                     <span><i class="far fa-calendar"></i> 16 Nov 2023</span>
                     <span><i class="fas fa-bolt"></i> High</span>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 40%;"></div>
-                </div>
+                
                 <div class="ticket-actions">
                     <button class="action-btn message-btn">
                         <i class="fas fa-comment"></i> Message
                     </button>
                     <button class="action-btn details-btn">
-                        <i class="fas fa-eye"></i> Details
+                       </i> Details
                     </button>
                 </div>
             </div>
@@ -330,15 +316,11 @@
                     <span><i class="far fa-calendar"></i> 10 Nov 2023</span>
                     <span><i class="fas fa-bolt"></i> Medium</span>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
+                
                 <div class="ticket-actions">
-                    <button class="action-btn message-btn">
-                        <i class="fas fa-comment"></i> Reopen
-                    </button>
+                 
                     <button class="action-btn details-btn">
-                        <i class="fas fa-eye"></i> Details
+                        </i> Details
                     </button>
                 </div>
             </div>

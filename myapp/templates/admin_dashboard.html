@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT Focal Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: rgb(93, 93, 240);
+      --accent-color: #4f8cff;
+      --bg-color: #f9fbfc;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --muted-text: #7f8c8d;
+    }
+
+    body { 
+      background-color: var(--bg-color); 
+      color: var(--text-color); 
+      font-family: 'Segoe UI', Tahoma, sans-serif; 
+    }
+    
+    .navbar {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .user-menu { position: relative; }
+    
+    .user-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .user-btn i { font-size: 1rem; }
+    
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      min-width: 180px;
+      overflow: hidden;
+      z-index: 100;
+    }
+    .ticket-card{
+            background:rgb(233, 221, 221);
+            border-left: 4px solid rgb(232, 29, 29);
+            padding: 15px;
+            margin:15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+
+    }
+    .dropdown-menu a {
+      color: var(--text-color);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    
+    .dropdown-menu a:hover { background-color: #f0f0f0; }
+    .user-menu:hover .dropdown-menu { display: block; }
+    
+    /* Stats Cards - Matching Previous Design */
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      padding: 20px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .stat-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 25px;
+      width: 300px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    
+    .stat-label {
+      color: #7f8c8d;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .ticket-column {
+      flex: 1;
+      background-color: var(--card-bg);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    .pending-stat .stat-number { color: #f39c12; }
+    .solved-stat .stat-number { color: #2ecc71; }
+    
+    .card { 
+      border-radius: 12px; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+      
+    }
+    
+    .badge { font-size: 0.9em; }
+    
+    @media (max-width: 768px) {
+      .stat-card { width: 100% !important; margin-bottom: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Helvetas</span>
+      <span style="margin-left: 8px;">Ticket System</span>
+    </div>
+    <div class="user-menu">
+      <button class="user-btn">
+        <i class="fas fa-user-circle"></i> Username
+        <i class="fas fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-menu">
+        <a href="#"><i class="fas fa-list"></i> Active Requests</a>
+        <a href="#"><i class="fas fa-user"></i> Request Profile</a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="container py-4">
+    <!-- Stats Cards - Matching Previous Design -->
+    <div class="stats-container">
+      <div class="stat-card pending-stat">
+        <div class="stat-label">
+          <i class="fas fa-clock" style="color: #f39c12;"></i>
+          Pending Requests
+        </div>
+        <div class="stat-number" id="pendingCount">3</div>
+      </div>
+      
+      <div class="stat-card solved-stat">
+        <div class="stat-label">
+          <i class="fas fa-check-circle" style="color: #2ecc71;"></i>
+          Solved Requests
+        </div>
+        <div class="stat-number" id="solvedCount">5</div>
+      </div>
+    </div>
+        <!-- Ticket Columns View -->
+    <div class="tickets-container mb-4">
+      <!-- Pending Tickets Column -->
+      <div class="ticket-column">
+        <div class="column-header" >
+          <i class="fas fa-clock" style="color: #f39c12;"></i>
+          Pending Tickets
+        </div>
+
+        <!-- Sample Ticket Card 1 -->
+        <div class="ticket-card pending">
+          <div class="ticket-title">
+            <span>Printer not working in Office 203</span>
+              <div class="ticket-meta">
+                    <span>#TKT-2023-002</span>
+                    <span> 16 Nov 2023</span>
+                    <span><i class="fas fa-bolt"></i> High</span>
+                </div>
+          </div>
+        </div>
+        <!-- More cards can be added here -->
+      </div>
+    </div>
+    <!-- All Requests Table -->
+    <div class="card p-4 mb-4">
+      <h5 class="mb-3" style="color: var(--primary-color);">All Requests</h5>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>User</th>
+              <th>Date</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Image</th>
+              <th>Change Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#TKT-001</td>
+              <td>Printer issue</td>
+              <td>John</td>
+              <td><i class="far fa-calendar">2024-06-01</td>
+              <td><span class="badge bg-danger"><i class="fas fa-bolt"></i>High</span></td>
+              <td><span class="badge bg-warning text-dark">Pending</span></td>
+              <td><a href="#" download><i class="fas fa-image"></i> Download</a></td>
+              <td>
+                <select class="form-select form-select-sm">
+                  <option>Pending</option>
+                  <option>Solved</option>
+                  <option>Delete</option>
+                </select>
+              </td>
+              <td><button class="action-btn details-btn p-1">
+                         Details
+            </button>
+            </td>
+            </tr>
+            
+            <!-- Additional dynamic rows go here -->
+          </tbody>
+          
+        </table>
+        
+      </div>
+    </div>
+
+    <div class="text-end">
+      <button class="btn btn-success" onclick="downloadExcel()">
+        <i class="fas fa-file-excel"></i> Download Excel
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function downloadExcel() {
+      alert("Excel file will be generated here (server-side export logic needed).");
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
