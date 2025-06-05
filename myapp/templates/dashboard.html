@@ -7,14 +7,13 @@
     <title>My Tickets | Ticket System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-            :root {
-        --primary-color:rgb(74, 74, 184);
-        --accent-color: #4f8cff;
-        --bg-color: #f9fbfc;
-        --card-bg: #ffffff;
-        --text-color: #333;
-        --muted-text: #7f8c8d;
-        }
+          :root {
+      --primary-color:rgb(93, 93, 240);
+      --accent-color: #4f8cff;
+      --bg-color: #f9fbfc;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --muted-text: #7f8c8d;}
 
         * {
         margin: 0;
@@ -121,7 +120,7 @@
         
         .ticket-card {
             background: #f9f9f9;
-            border-left: 4px solid;
+            border-left:4px solid;
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 6px;
@@ -134,7 +133,7 @@
         }
         
         .ticket-card.pending {
-            border-left-color: #f39c12;
+            border-left-color:rgb(202, 167, 109);
         }
         
         .ticket-card.solved {
@@ -195,11 +194,11 @@
         
         .message-btn {
             background: #e3f2fd;
-            color: #1565c0;
+            background-color: #3d73db;
         }
         
         .details-btn {
-            background:rgb(146, 109, 109);
+            background-color: #3d73db;
             color: white;
         }
         
@@ -243,6 +242,12 @@
       </div>
     </div>
   </nav>
+ 
+ <div class="stat-card solved-stat" style="height: 150px; display: flex; justify-content: center; align-items: center;">
+  <h2 class="font-weight-bold text-center">
+    Please wait while we resolve the issue.
+  </h2>
+</div>
 <!-- Ticket Dashboard -->
 <div class="tickets-container">
 
@@ -262,22 +267,29 @@
             </div>
             <div class="ticket-meta">
                 <span>#{{ ticket.ticket_number }}</span>
-                <span><i class="far fa-calendar"></i> {{ ticket.date_created|date:"d M Y" }}</span>
+                <span><i class="far fa-calendar"></i> {{ ticket.date_created|date:"d M Y H:i" }}</span>
                 <span><i class="fas fa-bolt"></i> {{ ticket.priority }}</span>
             </div>
             <div class="ticket-actions">
-                
-                <button class="action-btn details-btn">
-                              <a href="{% url 'message_show' ticket.id %}" class="action-btn details-btn p-1">
-                             Details
-                           </a>
- 
-                </button>
+                <a href="{% url 'message_show' ticket.id %}" class="action-btn details-btn p-1">
+                    Details
+                </a>
             </div>
         </div>
         {% empty %}
         <p>No pending tickets.</p>
         {% endfor %}
+
+        <!-- Pagination for Pending Tickets -->
+        <div class="pagination">
+            {% if pending_tickets.has_previous %}
+                <a href="?pending_page={{ pending_tickets.previous_page_number }}&solved_page={{ solved_tickets.number }}">Previous</a>
+            {% endif %}
+            <span>Page {{ pending_tickets.number }} of {{ pending_tickets.paginator.num_pages }}</span>
+            {% if pending_tickets.has_next %}
+                <a href="?pending_page={{ pending_tickets.next_page_number }}&solved_page={{ solved_tickets.number }}">Next</a>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Solved Tickets Column -->
@@ -296,24 +308,36 @@
             </div>
             <div class="ticket-meta">
                 <span>#{{ ticket.ticket_number }}</span>
-                <span><i class="far fa-calendar"></i> {{ ticket.date_created|date:"d M Y" }}</span>
+                <span><i class="far fa-calendar"></i> 
+                    {% load tz %}
+
+                        {{ ticket.date_created|localtime|date:"d M Y H:i" }}
+                        </span>
                 <span><i class="fas fa-bolt"></i> {{ ticket.priority }}</span>
             </div>
             <div class="ticket-actions">
-                <button class="action-btn details-btn">
-                     <a href="{% url 'message_show' ticket.id %}" class="action-btn details-btn p-1">
-            Details
-            </a>
-                        </button>
+                <a href="{% url 'message_show' ticket.id %}" class="action-btn details-btn p-1">
+                    Details
+                </a>
             </div>
         </div>
         {% empty %}
         <p>No solved tickets.</p>
         {% endfor %}
+
+        <!-- Pagination for Solved Tickets -->
+        <div class="pagination">
+            {% if solved_tickets.has_previous %}
+                <a href="?pending_page={{ pending_tickets.number }}&solved_page={{ solved_tickets.previous_page_number }}">Previous</a>
+            {% endif %}
+            <span>Page {{ solved_tickets.number }} of {{ solved_tickets.paginator.num_pages }}</span>
+            {% if solved_tickets.has_next %}
+                <a href="?pending_page={{ pending_tickets.number }}&solved_page={{ solved_tickets.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
     </div>
 
 </div>
-
 
 
 </html>

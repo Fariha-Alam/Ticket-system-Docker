@@ -7,14 +7,13 @@
     <title>Ticket Details | Ticket System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Reuse your existing styles */
-        :root {
-            --primary-color:rgb(74, 74, 184);
-            --accent-color: #4f8cff;
-            --bg-color: #f9fbfc;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --muted-text: #7f8c8d;
+       :root {
+      --primary-color:rgb(93, 93, 240);
+      --accent-color: #4f8cff;
+      --bg-color: #f9fbfc;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --muted-text: #7f8c8d;
         }
 
         * {
@@ -324,7 +323,7 @@
             </div>
             <div class="meta-item">
                 <i class="fas fa-calendar-alt"></i>
-                <span>Created: <strong>{{ ticket.date_created|date:"d M Y" }}</strong></span>
+                <span>Created: <strong>{{ ticket.date_created|date:"d M Y H:i" }}</strong></span>
             </div>
             <div class="meta-item">
                 <i class="fas fa-bolt"></i>
