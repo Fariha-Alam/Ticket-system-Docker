@@ -4,7 +4,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-
+from .views import checklist_view
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -20,6 +20,7 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('update_ticket_status/<int:ticket_id>/', views.update_ticket_status, name='update_ticket_status'),
     path('export_tickets/', views.export_tickets_excel, name='export_tickets'),
+    path('it-checklist/', checklist_view, name='it_checklist'),
 
 ]
 

@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Guidelines | Ticket System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: rgb(93, 93, 240);
+            --accent-color: #4f8cff;
+            --bg-color: #f9fbfc;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --muted-text: #7f8c8d;
+            --success-color: #28a745;
+            --success-hover: #218838;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-btn i {
+            font-size: 1rem;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            min-width: 180px;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .dropdown-menu a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .user-menu:hover .dropdown-menu {
+            display: block;
+        }
+
+        .checklist-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .checklist-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary-color);
+        }
+
+        h2 {
+            text-align: center;
+            padding: 20px 0 30px;
+            color: var(--primary-color);
+            font-size: 28px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--accent-color);
+            margin: 10px auto 0;
+        }
+
+        ul {
+            padding: 0 0 0 30px;
+            margin-bottom: 30px;
+        }
+
+        li {
+            margin: 15px 0;
+            list-style-type: none;
+            font-size: 16px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--success-color);
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        .agree {
+            display: block;
+            padding: 12px 30px;
+            margin: 30px auto 0;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .agree:hover {
+            background-color: var(--success-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .agree:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .checklist-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            h2 {
+                font-size: 24px;
+                padding: 10px 0 20px;
+            }
+            
+            li {
+                font-size: 15px;
+                padding-left: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Himi</span>
+            <span style="margin-left: 8px;">Ticket System</span>
+        </div>
+        <div class="user-menu">
+            <button class="user-btn">
+                <i class="fas fa-user-circle"></i> 
+                {% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}"><i class="fas fa-list"></i> My Tickets</a>
+                    <a href="{% url 'home' %}"><i class="fas fa-ticket-alt"></i> New Request</a>
+                    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="{% url 'registration' %}"><i class="fas fa-user-plus"></i> Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <div class="checklist-container">
+        <h2>Important IT Guidelines</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <ul>
+                {% for task in tasks %}
+                    <li>{{ task.task }}</li>
+                {% endfor %}
+            </ul>
+            <button type="submit" class="agree">
+                <i class="fas fa-check-circle"></i> I Understand & Proceed
+            </button>
+        </form>
+    </div>
+</body>
+</html>

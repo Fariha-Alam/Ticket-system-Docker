@@ -15,6 +15,8 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.utils.timezone import localtime
 
+from .models import ITChecklist
+
 @login_required
 def home(request):
     if request.user.is_staff or request.user.is_superuser:
@@ -73,7 +75,7 @@ def login_view(request):
             # ⇢  admin goes to admin_dashboard, others to home
             if user.is_superuser:
                 return redirect('admin_dashboard')
-            return redirect('home')
+            return redirect('it_checklist')
     else:
         form = LoginForm()
 
@@ -189,3 +191,17 @@ def mark_solved(request, ticket_id):
 
     # Redirect back to the same detail page (or change to dashboard)
     return redirect('message_show', ticket_id=ticket_id)
+
+
+
+@login_required
+def checklist_view(request):
+    if request.user.is_staff or request.user.is_superuser:
+        return redirect('admin_dashboard')
+    tasks = ITChecklist.objects.filter(is_active=True)
+
+    if request.method == 'POST':
+        # You can add logic to record acknowledgement
+        return redirect('home')  # or wherever you want
+
+    return render(request, 'checklist.html', {'tasks': tasks})

@@ -251,6 +251,7 @@
       <div class="dropdown-menu">
         {% if user.is_authenticated %}
           <a href="{% url 'dashboard' %}"><i class="fas fa-list"></i> My Tickets</a>
+          <a href="{% url 'it_checklist' %}"><i class="fas fa-list"></i> IT Checklist</a>
           
           <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
         {% else %}

@@ -3,11 +3,12 @@ from django.contrib.auth.models import User
 
 class Ticket(models.Model):
     REQUEST_TYPE_CHOICES = [
-        ('technical', 'Technical Issue'),
-        ('hardware', 'Hardware Problem'),
-        ('software', 'Software Problem'),
-        ('access', 'Access Request'),
-        ('other', 'Other'),
+        ('Technical', 'Technical Issue'),
+        ('Hardware', 'Hardware Problem'),
+        ('Software', 'Software Problem'),
+        ('Access', 'Access Request'),
+        ('Training', 'IT training Request'),
+        ('Other', 'Other'),
     ]
     
     PRIORITY_CHOICES = [
@@ -34,3 +35,11 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.ticket_number} - {self.title}"
+
+
+class ITChecklist(models.Model):
+    task = models.TextField(verbose_name="Checklist Item")
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.task[:50]
