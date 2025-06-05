@@ -263,93 +263,106 @@
     </style>
 </head>
 <body>
-      <nav class="navbar">
+     <nav class="navbar">
     <div class="logo">
-      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Helvetas</span>
+      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Himi</span>
       <span style="margin-left: 8px;">Ticket System</span>
     </div>
     <div class="user-menu">
       <button class="user-btn">
-        <i class="fas fa-user-circle"></i> Username
+        <i class="fas fa-user-circle"></i> 
+        {% if user.is_authenticated %}{{ user.username }}{% else %}Admin{% endif %}
         <i class="fas fa-chevron-down"></i>
       </button>
-      <div class="dropdown-menu">
-        <a href="#"><i class="fas fa-list"></i> Active Requests</a>
-        <a href="#"><i class="fas fa-user"></i> Request Profile</a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-      </div>
+      {% if user.is_authenticated %}
+  {% if user.is_superuser or user.is_staff %}
+    <!-- ADMIN USER MENU -->
+    <div class="dropdown-menu">
+      <a href="{% url 'admin_dashboard' %}"><i class="fas fa-tools"></i> Admin Dashboard</a>
+      <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  {% else %}
+    <!-- NORMAL USER MENU -->
+    <div class="dropdown-menu">
+      <a href="{% url 'dashboard' %}"><i class="fas fa-list"></i> My Tickets</a>
+      
+      <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  {% endif %}
+{% else %}
+  <!-- GUEST USER MENU -->
+  <div class="dropdown-menu">
+    <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+    <a href="{% url 'registration' %}"><i class="fas fa-user-plus"></i> Register</a>
+  </div>
+{% endif %}
     </div>
   </nav>
-
     <div class="ticket-details-container">
-        <a href="tickets.html" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Tickets
-        </a>
-        
-        <div class="ticket-detail-card">
-            <div class="ticket-header">
-                <h1 class="ticket-title">Printer not working in Office 203</h1>
-                <span class="status-badge status-pending">
+    
+    
+    <div class="ticket-detail-card">
+        <div class="ticket-header">
+            <h1 class="ticket-title">{{ ticket.title }}</h1>
+            <span class="status-badge {% if ticket.status == 'Pending' %}status-pending{% else %}status-solved{% endif %}">
+                {% if ticket.status == 'Pending' %}
                     <i class="fas fa-clock"></i> Pending
-                </span>
+                {% else %}
+                    <i class="fas fa-check"></i> Solved
+                {% endif %}
+            </span>
+        </div>
+        
+        <div class="ticket-meta">
+            <div class="meta-item">
+                <i class="fas fa-tag"></i>
+                <span>Ticket ID: <strong>#{{ ticket.ticket_number }}</strong></span>
             </div>
-            
-            <div class="ticket-meta">
-                <div class="meta-item">
-                    <i class="fas fa-tag"></i>
-                    <span>Ticket ID: <strong>#TKT-2023-001</strong></span>
-                </div>
-                <div class="meta-item">
-                    <i class="fas fa-user"></i>
-                    <span>Submitted by: <strong>John Doe</strong></span>
-                </div>
-                <div class="meta-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Created: <strong>15 Nov 2023</strong></span>
-                </div>
-                <div class="meta-item">
-                    <i class="fas fa-bolt"></i>
-                    <span>Priority: <strong>Medium</strong></span>
-                </div>
+            <div class="meta-item">
+                <i class="fas fa-user"></i>
+                <span>Submitted by: <strong>{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</strong></span>
             </div>
-            
-            <div class="ticket-body">
-                <h3 class="section-title">Description</h3>
-                <p>The HP LaserJet printer in Office 203 is showing an "Out of Paper" error even though the tray is fully loaded. This started happening after the power outage yesterday. I've tried restarting the printer and checking all connections, but the error persists.</p>
-                
-                <h3 class="section-title">Additional Information</h3>
-                <ul>
-                    <li>Printer model: HP LaserJet Pro M404dn</li>
-                    <li>Serial number: ABC123456789</li>
-                    <li>First noticed the issue: Yesterday at 3:45 PM</li>
-                    <li>Error message: "Tray 2 empty" (though tray is full)</li>
-                </ul>
+            <div class="meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Created: <strong>{{ ticket.date_created|date:"d M Y" }}</strong></span>
             </div>
-            
-            <div class="attachments">
-                <h3 class="section-title">Attachments</h3>
-                <div class="attachment-item">
-                    <div class="attachment-icon">
-                        <i class="fas fa-image"></i>
-                    </div>
-                    <div class="attachment-info">
-                        <div class="attachment-name">printer_error.jpg</div>
-                        <div class="attachment-size">2.4 MB • Uploaded 15 Nov 2023</div>
-                    </div>
-                    <button class="btn btn-secondary">
-                        <i class="fas fa-download"></i> Download
-                    </button>
-                </div>
-            </div>
-            
-            <div class="action-btns">
-                
-                <button class="btn btn-secondary">
-                    <i class="fas fa-check"></i> Mark as Solved
-                </button>
+            <div class="meta-item">
+                <i class="fas fa-bolt"></i>
+                <span>Priority: <strong>{{ ticket.priority }}</strong></span>
             </div>
         </div>
+        
+        <div class="ticket-body">
+            <h3 class="section-title">Description</h3>
+            <p>{{ ticket.description }}</p>
+            
+            {% if ticket.additional_info %}
+            <h3 class="section-title">Additional Information</h3>
+            <ul>
+                {% for info in ticket.additional_info %}
+                <li>{{ info }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+         <button type="submit" class="btn btn-secondary">
+        {% if ticket.attachment %}
+          <a href="{{ ticket.attachment.url }}" download><i class="fas fa-image"></i> File Download</a>
+        {% else %}
+          No File
+        {% endif %}
+        </button>
+        {% if ticket.status != 'Solved' %}
+        <form action="{% url 'mark_solved' ticket.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary">
+            <i class="fas fa-check"></i> Mark as Solved
+            </button>
+        </form>
+        {% endif %}
+
     </div>
+</div>
 
     <script>
         // Simple back button functionality

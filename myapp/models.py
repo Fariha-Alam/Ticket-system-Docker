@@ -1,0 +1,36 @@
+from django.db import models
+from django.contrib.auth.models import User
+
+class Ticket(models.Model):
+    REQUEST_TYPE_CHOICES = [
+        ('technical', 'Technical Issue'),
+        ('hardware', 'Hardware Problem'),
+        ('software', 'Software Problem'),
+        ('access', 'Access Request'),
+        ('other', 'Other'),
+    ]
+    
+    PRIORITY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical'),
+    ]
+
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Solved', 'Solved'),
+    ]
+
+    ticket_number = models.CharField(max_length=20, unique=True)
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
+    request_type = models.CharField(max_length=20, choices=REQUEST_TYPE_CHOICES, default='technical')
+    attachment = models.FileField(upload_to='attachments/', null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+    date_created = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.ticket_number} - {self.title}"

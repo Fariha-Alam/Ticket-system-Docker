@@ -1,0 +1,14 @@
+python -m venv env
+.\env\Scripts\activate         # Windows
+
+
+
+
+git checkout -b backup-before-pull
+git add .
+git commit -m "Backup before pulling from main"
+git checkout main
+git pull origin main
+
+
+pip install openpyxl

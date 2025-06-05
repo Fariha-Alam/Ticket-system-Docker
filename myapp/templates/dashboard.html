@@ -222,126 +222,98 @@
 <body>
  <nav class="navbar">
     <div class="logo">
-    <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Helvetas</span>
-    <span style="margin-left: 8px;">Ticket System</span>
+      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Himi</span>
+      <span style="margin-left: 8px;">Ticket System</span>
     </div>
     <div class="user-menu">
       <button class="user-btn">
-        <i class="fas fa-user-circle"></i> Username
+        <i class="fas fa-user-circle"></i> 
+        {% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}
         <i class="fas fa-chevron-down"></i>
       </button>
       <div class="dropdown-menu">
-        <a href="#"><i class="fas fa-list"></i> Active Requests</a>
-        <a href="#"><i class="fas fa-user"></i> Request Profile</a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}"><i class="fas fa-list"></i> My Tickets</a>
+          <a href="{% url 'home' %}"><i class="fas fa-ticket-alt"></i> New Request</a>
+          <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+          <a href="{% url 'registration' %}"><i class="fas fa-user-plus"></i> Register</a>
+        {% endif %}
       </div>
     </div>
   </nav>
+<!-- Ticket Dashboard -->
+<div class="tickets-container">
 
-    <!-- Tickets Dashboard -->
-    <div class="tickets-container">
-        <!-- Pending Tickets Column -->
-        <div class="ticket-column">
-            <div class="column-header">
-                <i class="fas fa-clock" style="color: #f39c12;"></i>
-                Pending Tickets
+    <!-- Pending Tickets Column -->
+    <div class="ticket-column">
+        <div class="column-header">
+            <i class="fas fa-clock" style="color: #f39c12;"></i>
+            Pending Tickets
+        </div>
+        {% for ticket in pending_tickets %}
+        <div class="ticket-card pending">
+            <div class="ticket-title">
+                <span>{{ ticket.title }}</span>
+                <span class="ticket-status status-pending">
+                    <i class="fas fa-clock"></i> Pending
+                </span>
             </div>
-            
-            <!-- Sample Ticket Card 1 -->
-            <div class="ticket-card pending">
-                <div class="ticket-title">
-                    <span>Printer not working in Office 203</span>
-                    <span class="ticket-status status-pending">
-                        <i class="fas fa-clock"></i> Pending
-                    </span>
-                </div>
-                <div class="ticket-meta">
-                    <span>#TKT-2023-001</span>
-                    <span><i class="far fa-calendar"></i> 15 Nov 2023</span>
-                    <span><i class="fas fa-bolt"></i> Medium</span>
-                </div>
-                
-                <div class="ticket-actions">
-                    <button class="action-btn message-btn">
-                        <i class="fas fa-comment"></i> Message
-                    </button>
-                    <button class="action-btn details-btn">
-                        <i class="fas fa-eye"></i> Details
-                    </button>
-                </div>
+            <div class="ticket-meta">
+                <span>#{{ ticket.ticket_number }}</span>
+                <span><i class="far fa-calendar"></i> {{ ticket.date_created|date:"d M Y" }}</span>
+                <span><i class="fas fa-bolt"></i> {{ ticket.priority }}</span>
             </div>
-            
-            <!-- Sample Ticket Card 2 -->
-            <div class="ticket-card pending">
-                <div class="ticket-title">
-                    <span>Email account access issue</span>
-                    <span class="ticket-status status-pending">
-                        <i class="fas fa-clock"></i> Pending
-                    </span>
-                </div>
-                <div class="ticket-meta">
-                    <span>#TKT-2023-002</span>
-                    <span><i class="far fa-calendar"></i> 16 Nov 2023</span>
-                    <span><i class="fas fa-bolt"></i> High</span>
-                </div>
+            <div class="ticket-actions">
                 
-                <div class="ticket-actions">
-                    <button class="action-btn message-btn">
-                        <i class="fas fa-comment"></i> Message
-                    </button>
-                    <button class="action-btn details-btn">
-                       </i> Details
-                    </button>
-                </div>
+                <button class="action-btn details-btn">
+                              <a href="{% url 'message_show' ticket.id %}" class="action-btn details-btn p-1">
+                             Details
+                           </a>
+ 
+                </button>
             </div>
         </div>
-        
-        <!-- Solved Tickets Column -->
-        <div class="ticket-column">
-            <div class="column-header">
-                <i class="fas fa-check-circle" style="color: #2ecc71;"></i>
-                Solved Tickets
-            </div>
-            
-            <!-- Sample Solved Ticket -->
-            <div class="ticket-card solved">
-                <div class="ticket-title">
-                    <span>WiFi connection drops frequently</span>
-                    <span class="ticket-status status-solved">
-                        <i class="fas fa-check"></i> Solved
-                    </span>
-                </div>
-                <div class="ticket-meta">
-                    <span>#TKT-2023-003</span>
-                    <span><i class="far fa-calendar"></i> 10 Nov 2023</span>
-                    <span><i class="fas fa-bolt"></i> Medium</span>
-                </div>
-                
-                <div class="ticket-actions">
-                 
-                    <button class="action-btn details-btn">
-                        </i> Details
-                    </button>
-                </div>
-            </div>
-        </div>
+        {% empty %}
+        <p>No pending tickets.</p>
+        {% endfor %}
     </div>
 
-    <script>
-        // Add interactivity
-        document.querySelectorAll('.message-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                // In real app, this would open a chat/message modal
-                alert('Messaging feature will open here');
-            });
-        });
-        
-        document.querySelectorAll('.details-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                // In real app, this would show full ticket details
-                alert('Ticket details will show here');
-            });
-        });
-    </script>
-</body>
+    <!-- Solved Tickets Column -->
+    <div class="ticket-column">
+        <div class="column-header">
+            <i class="fas fa-check-circle" style="color: #2ecc71;"></i>
+            Solved Tickets
+        </div>
+        {% for ticket in solved_tickets %}
+        <div class="ticket-card solved">
+            <div class="ticket-title">
+                <span>{{ ticket.title }}</span>
+                <span class="ticket-status status-solved">
+                    <i class="fas fa-check"></i> Solved
+                </span>
+            </div>
+            <div class="ticket-meta">
+                <span>#{{ ticket.ticket_number }}</span>
+                <span><i class="far fa-calendar"></i> {{ ticket.date_created|date:"d M Y" }}</span>
+                <span><i class="fas fa-bolt"></i> {{ ticket.priority }}</span>
+            </div>
+            <div class="ticket-actions">
+                <button class="action-btn details-btn">
+                     <a href="{% url 'message_show' ticket.id %}" class="action-btn details-btn p-1">
+            Details
+            </a>
+                        </button>
+            </div>
+        </div>
+        {% empty %}
+        <p>No solved tickets.</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+
+
 </html>

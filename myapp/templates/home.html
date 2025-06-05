@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -232,113 +231,117 @@
       
     }
   </style>
+
+
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
-
   <!-- Navbar -->
   <nav class="navbar">
     <div class="logo">
-    <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Helvetas</span>
-    <span style="margin-left: 8px;">Ticket System</span>
+      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Himi</span>
+      <span style="margin-left: 8px;">Ticket System</span>
     </div>
     <div class="user-menu">
       <button class="user-btn">
-        <i class="fas fa-user-circle"></i> Username
+        <i class="fas fa-user-circle"></i> 
+        {% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}
         <i class="fas fa-chevron-down"></i>
       </button>
       <div class="dropdown-menu">
-        <a href="#"><i class="fas fa-list"></i> Active Requests</a>
-        <a href="#"><i class="fas fa-user"></i> Request Profile</a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}"><i class="fas fa-list"></i> My Tickets</a>
+          
+          <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+          <a href="{% url 'registration' %}"><i class="fas fa-user-plus"></i> Register</a>
+        {% endif %}
       </div>
     </div>
   </nav>
 
-  <!-- Request Stats -->
-  <div class="stats-container">
-    <div class="stat-card">
-      <div class="stat-number">24</div>
-      <div class="stat-label">Pending Requests</div>
+  <!-- Main Content -->
+   <!-- Dashboard Content -->
+  <div class="container py-4">
+    <!-- Stats Cards - Matching Previous Design -->
+    <div class="stats-container">
+      <div class="stat-card pending-stat">
+        <div class="stat-label">
+          <i class="fas fa-clock" style="color: #f39c12;"></i>
+          Pending Requests
+        </div>
+        <div class="stat-number" id="pendingCount">{{ pending_count }}</div>
+      </div>
+      
+      <div class="stat-card solved-stat">
+        <div class="stat-label">
+          <i class="fas fa-check-circle" style="color: #2ecc71;"></i>
+          Solved Requests
+        </div>
+        <div class="stat-number" id="solvedCount">{{ solved_count }}</div>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-number">156</div>
-      <div class="stat-label">Solved Requests</div>
+<!-- Request Creation Form -->
+<div class="request-form-container">
+  <h2 class="form-title">Create New Request</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        {{ form.request_type.label_tag }}
+        {{ form.request_type }}
+      </div>
+      <div class="form-group">
+        {{ form.priority.label_tag }}
+        {{ form.priority }}
+      </div>
     </div>
-  </div>
 
-  <!-- Request Creation Form -->
-  <div class="request-form-container">
-    <h2 class="form-title">Create New Request</h2>
-    <form id="requestForm">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="requestType">Request Type</label>
-          <select class="form-select" id="requestType" required>
-            <option value="">Select request type...</option>
-            <option value="technical">Technical Issue</option>
-            <option value="hardware">Hardware Problem</option>
-            <option value="software">Software Problem</option>
-            <option value="access">Access Request</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="priority">Priority</label>
-          <select id="priority" class="form-select" required>
-            <option value="low">Low</option>
-            <option value="medium" selected>Medium</option>
-            <option value="high">High</option>
-            <option value="critical">Critical</option>
-          </select>
-        </div>
-      </div>
+    <div class="form-group">
+      {{ form.title.label_tag }}
+      {{ form.title }}
+    </div>
 
-      <div class="form-group">
-        <label for="subject">Subject</label>
-        <input type="text" class="form-control" id="subject" required />
-      </div>
+    <div class="form-group">
+      {{ form.description.label_tag }}
+      {{ form.description }}
+    </div>
 
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea class="form-control" id="description" required></textarea>
-      </div>
+    <div class="form-group">
+      {{ form.attachment.label_tag }}
+      {{ form.attachment }}
+    </div>
 
-      <div class="form-group">
-        <label>Attachments</label>
-        <div class="file-upload">
-          <button type="button" class="file-upload-btn">
-            <i class="fas fa-paperclip"></i> Choose File
-          </button>
-          <span class="file-name">No file chosen</span>
-          <input type="file" id="fileUpload" style="display: none;" />
-        </div>
-      </div>
+    <button type="submit" class="submit-btn">
+      <i class="fas fa-paper-plane"></i> Send Request
+    </button>
+  </form>
+</div>
 
-      <button type="submit" class="submit-btn">
-        <i class="fas fa-paper-plane"></i> Send Request
-      </button>
-    </form>
-  </div>
-
+  {% block extra_js %}
   <script>
-    // File upload preview
-    document.querySelector('.file-upload-btn').addEventListener('click', () => {
-      document.getElementById('fileUpload').click();
-    });
+    // Base JavaScript functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Dropdown menu toggle
+      const userMenu = document.querySelector('.user-menu');
+      if (userMenu) {
+        userMenu.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const dropdown = this.querySelector('.dropdown-menu');
+          dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+      }
 
-    document.getElementById('fileUpload').addEventListener('change', function (e) {
-      const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
-      document.querySelector('.file-name').textContent = fileName;
-    });
-
-    // Dummy submit
-    document.getElementById('requestForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert('Request submitted!');
-      this.reset();
-      document.querySelector('.file-name').textContent = 'No file chosen';
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function() {
+        const dropdowns = document.querySelectorAll('.dropdown-menu');
+        dropdowns.forEach(dropdown => {
+          dropdown.style.display = 'none';
+        });
+      });
     });
   </script>
-
+  {% endblock %}
 </body>
 </html>
