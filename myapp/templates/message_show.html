@@ -162,6 +162,7 @@
             font-weight: 600;
             margin-bottom: 10px;
             color: var(--primary-color);
+            margin-top: 20px;
         }
 
         .attachments {
@@ -337,7 +338,7 @@
                 <i class="fas fa-tools"></i>
                 <span>Request Type: <strong>{{ ticket.request_type }}</strong></span>
             </div>
-            <h3 class="section-title">Description</h3>
+            <h3 class="section-title pt-5" >Description</h3>
             <p>{{ ticket.description }}</p>
             
             {% if ticket.additional_info %}
