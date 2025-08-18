@@ -265,7 +265,7 @@
 <body>
      <nav class="navbar">
     <div class="logo">
-      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Himi</span>
+      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Helvetass</span>
       <span style="margin-left: 8px;">Ticket System</span>
     </div>
     <div class="user-menu">
@@ -339,7 +339,7 @@
                 <span>Request Type: <strong>{{ ticket.request_type }}</strong></span>
             </div>
             <h3 class="section-title pt-5" >Description</h3>
-            <p>{{ ticket.description }}</p>
+            <p style="white-space: pre-line;">{{ ticket.description }}</p>
             
             {% if ticket.additional_info %}
             <h3 class="section-title">Additional Information</h3>
@@ -365,8 +365,39 @@
             </button>
         </form>
         {% endif %}
+   <h3 class="section-title">Solving Time</h3>
 
+{% if ticket.status == "Solved" and ticket.solved_time %}
+    <div style="margin-bottom: 10px;">
+        <strong>Solved On:</strong>
+        <span>{{ ticket.solved_time|date:"d M Y, H:i" }}</span>
     </div>
+{% else %}
+    <div style="margin-bottom: 10px;">
+        <strong>Approximate Solving Time:</strong>
+        <span>{{ ticket.approx_solving_time|default:"Not set yet" }}</span>
+    </div>
+
+    {% if is_admin %}
+    <!-- Admin Edit Form -->
+    <button class="btn btn-secondary" onclick="toggleEdit()">Edit Time</button>
+    <form method="post" id="editTimeForm" style="display: none; margin-top: 15px;">
+        {% csrf_token %}
+        <input type="text" name="approx_solving_time" value="{{ ticket.approx_solving_time }}"
+               placeholder="e.g. 12 June 2025, 3:00 PM"
+               style="padding: 10px; width: 300px; margin-right: 10px;">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+    </form>
+    <script>
+      function toggleEdit() {
+          const form = document.getElementById("editTimeForm");
+          form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+    </script>
+    {% endif %}
+{% endif %}
+
+
 </div>
 
     <script>

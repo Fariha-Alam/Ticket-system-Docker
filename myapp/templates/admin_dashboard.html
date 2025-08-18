@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,8 +8,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
- :root {
-      --primary-color:rgb(93, 93, 240);
+    :root {
+      --primary-color: rgb(93, 93, 240);
       --accent-color: #4f8cff;
       --bg-color: #f9fbfc;
       --card-bg: #ffffff;
@@ -16,12 +17,12 @@
       --muted-text: #7f8c8d;
     }
 
-    body { 
-      background-color: var(--bg-color); 
-      color: var(--text-color); 
-      font-family: 'Segoe UI', Tahoma, sans-serif; 
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Tahoma, sans-serif;
     }
-    
+
     .navbar {
       background-color: var(--primary-color);
       color: white;
@@ -31,14 +32,16 @@
       align-items: center;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    
+
     .logo {
       font-size: 1.5rem;
       font-weight: bold;
     }
-    
-    .user-menu { position: relative; }
-    
+
+    .user-menu {
+      position: relative;
+    }
+
     .user-btn {
       background: none;
       border: none;
@@ -49,9 +52,11 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
-    .user-btn i { font-size: 1rem; }
-    
+
+    .user-btn i {
+      font-size: 1rem;
+    }
+
     .dropdown-menu {
       display: none;
       position: absolute;
@@ -64,15 +69,11 @@
       overflow: hidden;
       z-index: 100;
     }
-    .ticket-card{
-            background:rgb(233, 221, 221);
-            border-left: 4px solid rgb(187, 176, 176);
-            padding: 15px;
-            margin:15px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            display:inline-block;
+
+    .user-menu:hover .dropdown-menu {
+      display: block;
     }
+
     .dropdown-menu a {
       color: var(--text-color);
       padding: 12px 16px;
@@ -82,11 +83,11 @@
       text-decoration: none;
       transition: background 0.3s;
     }
-    
-    .dropdown-menu a:hover { background-color: #f0f0f0; }
-    .user-menu:hover .dropdown-menu { display: block; }
-    
-    /* Stats Cards - Matching Previous Design */
+
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+
     .stats-container {
       display: flex;
       justify-content: space-around;
@@ -94,7 +95,7 @@
       flex-wrap: wrap;
       gap: 20px;
     }
-    
+
     .stat-card {
       background-color: white;
       border-radius: 8px;
@@ -104,17 +105,17 @@
       text-align: center;
       transition: transform 0.3s;
     }
-    
+
     .stat-card:hover {
       transform: translateY(-5px);
     }
-    
+
     .stat-number {
       font-size: 36px;
       font-weight: bold;
       margin: 10px 0;
     }
-    
+
     .stat-label {
       color: #7f8c8d;
       font-size: 16px;
@@ -123,7 +124,15 @@
       justify-content: center;
       gap: 8px;
     }
- 
+
+    .pending-stat .stat-number {
+      color: #f39c12;
+    }
+
+    .solved-stat .stat-number {
+      color: #2ecc71;
+    }
+
     .ticket-column {
       flex: 1;
       background-color: var(--card-bg);
@@ -131,224 +140,379 @@
       border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
-    .pending-stat .stat-number { color: #f39c12; }
-    .solved-stat .stat-number { color: #2ecc71; }
-    
-    .card { 
-      border-radius: 12px; 
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
-      
+
+    .ticket-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 20px;
     }
-    
-    .badge { font-size: 0.9em; }
-    
+
+    .ticket-card {
+      background: rgb(233, 221, 221);
+      border-left: 4px solid rgb(187, 176, 176);
+      padding: 15px;
+      margin: 0;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: calc(33.333% - 13.33px);
+      box-sizing: border-box;
+    }
+
+    .ticket-title {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .ticket-meta span {
+      display: inline-block;
+      margin-right: 10px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .badge {
+      font-size: 0.9em;
+    }
+
     @media (max-width: 768px) {
-      .stat-card { width: 100% !important; margin-bottom: 1rem; }
+      .ticket-card, .stat-card {
+        width: 100% !important;
+      }
     }
+
+  .priority,
+  .status {
+  display: inline-block;
+  min-width: 80px;  /* fixed width */
+  text-align: center;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+  .card-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+.custom-table-wrapper {
+  overflow-x: auto;
+}
+
+.custom-ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.custom-ticket-table thead {
+  background-color: #f8f9fa;
+}
+
+.custom-ticket-table th,
+.custom-ticket-table td {
+  padding: 12px 14px;
+  text-align: center;
+  border: 1px solid #eaeaea;
+}
+
+.priority.critical {
+  background-color: #dc3545;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+.priority.high {
+  background-color: #dc3545;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+.priority.medium {
+  background-color: #ffc107;
+  color: #000;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.priority.low {
+  background-color: #17a2b8;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.status.pending {
+  background-color: #ffc107;
+  color: #000;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.status.solved {
+  background-color: #2ecc71;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.file-link {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.file-link:hover {
+  text-decoration: underline;
+}
+
+.no-file {
+  color: #999;
+  font-style: italic;
+}
+
+.status-dropdown {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.action-btn {
+  display: inline-block;
+  background: #007bff;
+  color: #fff;
+  padding: 5px 12px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.action-btn:hover {
+  background: #0056b3;
+}
+
   </style>
 </head>
 <body>
- <nav class="navbar">
+  <nav class="navbar">
     <div class="logo">
-      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Himi</span>
+      <span style="font-family: 'Brush Script MT', cursive; font-size: 1.2em;">Helvetas</span>
       <span style="margin-left: 8px;">Ticket System</span>
     </div>
     <div class="user-menu">
       <button class="user-btn">
-        <i class="fas fa-user-circle"></i> 
+        <i class="fas fa-user-circle"></i>
         {% if user.is_authenticated %}{{ user.username }}{% else %}Admin{% endif %}
         <i class="fas fa-chevron-down"></i>
       </button>
       {% if user.is_authenticated %}
-  {% if user.is_superuser or user.is_staff %}
-    <!-- ADMIN USER MENU -->
-    <div class="dropdown-menu">
-      <a href="{% url 'admin_dashboard' %}"><i class="fas fa-tools"></i> Admin Dashboard</a>
-      <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-  {% else %}
-    <!-- NORMAL USER MENU -->
-    <div class="dropdown-menu">
-      <a href="{% url 'dashboard' %}"><i class="fas fa-list"></i> My Tickets</a>
-      
-      <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-  {% endif %}
-{% else %}
-  <!-- GUEST USER MENU -->
-  <div class="dropdown-menu">
-    <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
-    <a href="{% url 'registration' %}"><i class="fas fa-user-plus"></i> Register</a>
-  </div>
-{% endif %}
+        {% if user.is_superuser or user.is_staff %}
+          <div class="dropdown-menu">
+            <a href="{% url 'admin_dashboard' %}"><i class="fas fa-tools"></i> Admin Dashboard</a>
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </div>
+        {% else %}
+          <div class="dropdown-menu">
+            <a href="{% url 'dashboard' %}"><i class="fas fa-list"></i> My Tickets</a>
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="dropdown-menu">
+          <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+          <a href="{% url 'registration' %}"><i class="fas fa-user-plus"></i> Register</a>
+        </div>
+      {% endif %}
     </div>
   </nav>
-  <!-- Dashboard Content -->
+
   <div class="container py-4">
-    <!-- Stats Cards - Matching Previous Design -->
+    <!-- Stats Cards -->
     <div class="stats-container">
       <div class="stat-card pending-stat">
         <div class="stat-label">
-          <i class="fas fa-clock" style="color: #f39c12;"></i>
-          Pending Requests
+          <i class="fas fa-clock" style="color: #f39c12;"></i> Pending Requests
         </div>
-        <div class="stat-number" id="pendingCount">{{ pending_count }}</div>
+        <div class="stat-number">{{ pending_count }}</div>
       </div>
-      
+
       <div class="stat-card solved-stat">
         <div class="stat-label">
-          <i class="fas fa-check-circle" style="color: #2ecc71;"></i>
-          Solved Requests
+          <i class="fas fa-check-circle" style="color: #2ecc71;"></i> Solved Requests
         </div>
-        <div class="stat-number" id="solvedCount">{{ solved_count }}</div>
+        <div class="stat-number">{{ solved_count }}</div>
       </div>
     </div>
+
+    <!-- Ticket Cards -->
     <div class="tickets-container mb-4">
-      <!-- Pending Tickets Column -->
       <div class="ticket-column">
-        <div class="column-header" >
-          <i class="fas fa-clock" style="color: #f39c12;"></i>
-          Pending Tickets
+        <div class="column-header">
+          <i class="fas fa-clock" style="color: #f39c12;"></i> Pending Tickets
         </div>
-
-        <!-- Sample Ticket Card 1 -->
-            <!-- Ticket Cards -->
-      {% for ticket in pending_tickets %}
-        <div class="ticket-card pending">
-          <div class="ticket-title">
-            <strong>{{ ticket.title }}</strong>
-          </div>
-          <div class="ticket-meta">
-            <span>#{{ ticket.ticket_number }}</span>
-            <span>{{ ticket.date_created|date:"d M Y" }}</span>
-            <span><i class="fas fa-bolt"></i> {{ ticket.priority }}</span>
-          </div>
+        <div class="ticket-container">
+          {% for ticket in pending_tickets %}
+            <div class="ticket-card pending">
+              <div class="ticket-title"><strong>{{ ticket.title }}</strong></div>
+              <div class="ticket-meta">
+                <span>#{{ ticket.ticket_number }}</span>
+                <span>{{ ticket.date_created|date:"d M Y" }}</span>
+                <span><i class="fas fa-bolt"></i> {{ ticket.priority }}</span>
+              </div>
+            </div>
+          {% empty %}
+            <p>No pending tickets.</p>
+          {% endfor %}
         </div>
-        {% empty %}
-        <p>No pending tickets.</p>
-      {% endfor %}
-
-        <!-- More cards can be added here -->
       </div>
     </div>
+
     <!-- All Requests Table -->
-    <div class="card p-4 mb-4">
-      <h5 class="mb-3" style="font-size: 1.3rem;
-                              margin-bottom: 1.5rem;
-                              color: var(--primary-color);
-                              border-bottom: 2px solid #eee;
-                              padding-bottom: 0.5rem;">All Requests
-        </h5>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-  <thead class="table-light">
-    <tr>
-      <th>ID</th>
-      <th>Title</th>
-      <th>User</th>
-      <th>Date</th>
-      <th>Priority</th>
-      <th>Status</th>
-      <th>Image</th>
-      <th>Change Status</th>
-      <th>Details</th>
-      
-    </tr>
-  </thead>
-  <tbody>
-    {% for ticket in page_obj %}
-    <tr>
-      <td>#{{ ticket.ticket_number }}</td>
-      <td>{{ ticket.title }}</td>
-      <td>{{ ticket.created_by.get_full_name|default:ticket.created_by.username }}</td>
-      <td>{{ ticket.date_created|date:"d M Y H:i" }}</td>
-      <td><span class="badge bg-danger"><i class="fas fa-bolt"></i> {{ ticket.priority }}</span></td>
-      <td>
-        <span class="badge {% if ticket.status == 'Pending' %}bg-warning text-dark{% else %}bg-success{% endif %}">
-          {{ ticket.status }}
-        </span>
-      </td>
-      <td>
-        {% if ticket.attachment %}
-          <a href="{{ ticket.attachment.url }}" download><i class="fas fa-image"></i> Download</a>
-        {% else %}
-          No File
-        {% endif %}
-      </td>
- 
-       <td>
-        <form method="post" action="{% url 'update_ticket_status' ticket.id %}">
-          {% csrf_token %}
-          <select name="status" class="form-select form-select-sm" onchange="handleStatusChange(this, '{{ ticket.id }}')">
-            <option value="Pending" {% if ticket.status == "Pending" %}selected{% endif %}>Pending</option>
-            <option value="Solved" {% if ticket.status == "Solved" %}selected{% endif %}>Solved</option>
-            <option value="Delete">Delete</option>
-          </select>
-        </form>
-      </td>
-    
-      <td>
-            <a href="{% url 'message_show' ticket.id %}" class="action-btn details-btn p-1">
-      Details
+     <div class="d-flex justify-content-between align-items-center flex-wrap mb-3 px-2">
+  <!-- Filter buttons -->
+  <div class="btn-group mb-2" role="group" aria-label="Filters">
+    <a href="?filter=all" class="btn btn-outline-primary {% if request.GET.filter == 'all' or not request.GET.filter %}active{% endif %}">
+      All Requests
     </a>
-
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-      </div>
-    </div>
-<div class="pagination p-2">
-  <span class="step-links "style="gap: 20px;padding-right: 10px;padding-left: 10px;">
-    {% if page_obj.has_previous %}
-      <a href="?page=1">First</a>
-      <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
-
-    <span class="current"style="padding-right: 10px;padding-left: 10px;">
-      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    </span>
-
-    {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}">Next</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-    {% endif %}
-  </span>
-</div>
-
-  <div class="text-end mt-3">
-    <a href="{% url 'export_tickets' %}" class="btn btn-success">
-      <i class="fas fa-file-excel"></i> Download Excel
+   
+    <a href="?filter=user" class="btn btn-outline-primary {% if request.GET.filter == 'user' %}active{% endif %}">
+      <i class="fas fa-user"></i> User
     </a>
   </div>
 
+  <!-- Date Picker and Search Input -->
+   <form method="get" action="">
+    <input type="hidden" name="filter" value="user">
+    <input type="text" name="user" placeholder="Search by username" value="{{ user_query }}">
+    <button type="submit">Search</button>
+</form>
+
+</div>
+
+   <div class="card-container">
+  <h5 class="section-title">All Requests</h5>
+  <div class="custom-table-wrapper">
+    <table class="custom-ticket-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Date</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>File</th>
+          <th>Change</th>
+          <th>Details</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ticket in page_obj %}
+        <tr>
+          <td>#{{ ticket.ticket_number }}</td>
+          <td>{{ ticket.created_by.get_username|default:ticket.created_by.username }}</td>
+          <td>{{ ticket.date_created|date:"d M Y H:i" }}</td>
+          <td><span class="priority {{ ticket.priority|lower }}">{{ ticket.priority }}</span></td>
+          <td><span class="status {{ ticket.status|lower }}">{{ ticket.status }}</span></td>
+          <td>
+            {% if ticket.attachment %}
+              <a href="{{ ticket.attachment.url }}" download class="file-link">Download</a>
+            {% else %}
+              <span class="no-file">No File</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="post" action="{% url 'update_ticket_status' ticket.id %}">
+              {% csrf_token %}
+              <select name="status" class="status-dropdown" onchange="handleStatusChange(this, '{{ ticket.id }}')">
+                <option value="Pending" {% if ticket.status == "Pending" %}selected{% endif %}>Pending</option>
+                <option value="Solved" {% if ticket.status == "Solved" %}selected{% endif %}>Solved</option>
+                <option value="Delete">Delete</option>
+              </select>
+            </form>
+          </td>
+          <td><a href="{% url 'message_show' ticket.id %}" class="action-btn">View</a></td>
+          <td><a href="{% url 'ticket_solution_detail' ticket.id %}" class="action-btn">💡</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+    <!-- Pagination -->
+    <div class="pagination p-2">
+      <span class="step-links" style="gap: 20px; padding-right: 10px; padding-left: 10px;">
+        {% if page_obj.has_previous %}
+          <a href="?page=1">First</a>
+          <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        <span class="current" style="padding: 0 10px;">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">Next</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+      </span>
+    </div>
+
+    <!-- Excel Download -->
+    <div class="text-end mt-3">
+      <a href="{% url 'export_tickets' %}" class="btn btn-success">
+        <i class="fas fa-file-excel"></i> Download Excel
+      </a>
+    </div>
   </div>
 
   <script>
-    function downloadExcel() {
-      alert("Excel file will be generated here (server-side export logic needed).");
+    function handleStatusChange(selectElement, ticketId) {
+      const value = selectElement.value;
+      const form = selectElement.form;
+
+      if (value === 'Delete') {
+        if (confirm('Are you sure you want to delete this ticket?')) {
+          form.submit();
+        } else {
+          selectElement.selectedIndex = 0;
+        }
+      } else {
+        form.submit();
+      }
     }
+
+  // Trigger search on typing (enter key)
+
+  document.getElementById('userSearch').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      const user = this.value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('filter', 'user');
+      url.searchParams.set('user', user);
+      window.location.href = url.toString();
+    }
+  });
+
+
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-<script>
-  function handleStatusChange(selectElement, ticketId) {
-    const value = selectElement.value;
-    const form = selectElement.form;
-
-    if (value === 'Delete') {
-      if (confirm('Are you sure you want to delete this ticket?')) {
-        form.submit();
-      } else {
-        // Revert to the original status if cancelled
-        selectElement.selectedIndex = 0;
-      }
-    } else {
-      form.submit(); // Submit form for Pending or Solved
-    }
-  }
-</script>

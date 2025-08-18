@@ -21,6 +21,9 @@ urlpatterns = [
     path('update_ticket_status/<int:ticket_id>/', views.update_ticket_status, name='update_ticket_status'),
     path('export_tickets/', views.export_tickets_excel, name='export_tickets'),
     path('it-checklist/', checklist_view, name='it_checklist'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path("tickets/<int:ticket_id>/solution/", views.ticket_solution_detail,
+     name="ticket_solution_detail"),
 
 ]
 

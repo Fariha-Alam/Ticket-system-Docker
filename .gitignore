@@ -1,0 +1,17 @@
+# Environment files
+.env
+
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Node modules (if JS project)
+node_modules/
+
+# Virtual environment
+venv/
+my.conf

@@ -30,6 +30,9 @@ class Ticket(models.Model):
     request_type = models.CharField(max_length=20, choices=REQUEST_TYPE_CHOICES, default='technical')
     attachment = models.FileField(upload_to='attachments/', null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+    solution_text = models.TextField(null=True, blank=True)
+    approx_solving_time = models.CharField(max_length=100, blank=True, null=True)
+    solved_time = models.DateTimeField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 

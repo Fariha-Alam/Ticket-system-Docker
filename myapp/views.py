@@ -14,9 +14,17 @@ from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.utils.timezone import localtime
-
+from django.utils import timezone
 from .models import ITChecklist
 
+
+from django.views.decorators.http import require_http_methods
+from .forms import SolutionForm
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from django.shortcuts import render
+from django.utils.crypto import get_random_string
+from django.contrib.auth import get_user_model
 @login_required
 def home(request):
     if request.user.is_staff or request.user.is_superuser:
@@ -112,7 +120,16 @@ def admin_dashboard(request):
 
     pending_tickets = tickets.filter(status='Pending')
     solved_tickets = tickets.filter(status='Solved')
-    paginator = Paginator(tickets, 3)  # Show 8 tickets per page
+    filter_type = request.GET.get('filter')
+    user_query = request.GET.get('user')
+
+
+    
+    if filter_type == 'user' and user_query:
+        tickets = tickets.filter(created_by__username__icontains=user_query)
+
+  
+    paginator = Paginator(tickets, 8)  # Show 8 tickets per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -123,10 +140,23 @@ def admin_dashboard(request):
         'solved_count': solved_tickets.count(),
     }
     return render(request, 'admin_dashboard.html', context)
+
 @login_required
+@require_http_methods(["GET", "POST"])
 def message_show(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
-    return render(request, 'message_show.html', {'ticket': ticket})
+    is_admin = request.user.is_staff or request.user.is_superuser
+
+    if request.method == "POST" and is_admin:
+        ticket.approx_solving_time = request.POST.get("approx_solving_time", "").strip()
+        ticket.save()
+        return redirect('message_show', ticket_id=ticket.id)  # Prevents resubmission
+
+    return render(request, 'message_show.html', {
+        'ticket': ticket,
+        'is_admin': is_admin,
+    })
+
 
 @login_required
 def logout(request):
@@ -157,7 +187,7 @@ def export_tickets_excel(request):
     ws.title = "Tickets"
 
     # Header row
-    ws.append(['Ticket Number', 'Title', 'Description', 'Priority', 'Status', 'Date Created'])
+    ws.append(['Ticket Number', 'Username', 'Title', 'Description', 'Priority', 'Status', 'Date Created','Date Solved'])
 
     for ticket in Ticket.objects.all():
         ws.append([
@@ -168,6 +198,7 @@ def export_tickets_excel(request):
             ticket.priority,
             ticket.status,
             localtime(ticket.date_created).strftime("%d %b %Y %H:%M"),
+            localtime(ticket.solved_time).strftime("%d %b %Y %H:%M"),
         ])
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -175,23 +206,23 @@ def export_tickets_excel(request):
     wb.save(response)
     return response
 
-
+@login_required
+def ticket_solution_detail(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    if request.method == "POST" and (request.user.is_staff or request.user.is_superuser):
+        ticket.solution_text = request.POST.get("solution_text")
+        ticket.save()
+        return redirect("ticket_solution_detail", ticket_id=ticket_id)
+    return render(request, "solution.html", {"ticket": ticket})
 
 @login_required
 def mark_solved(request, ticket_id):
-    """
-    Set the ticket’s status to 'Solved' and redirect back to the detail or dashboard.
-    """
     ticket = get_object_or_404(Ticket, id=ticket_id)
-
-    # Only allow the creator or an admin to mark as solved:
     if request.user == ticket.created_by or request.user.is_staff:
         ticket.status = 'Solved'
+        ticket.solved_time = timezone.now()
         ticket.save()
-
-    # Redirect back to the same detail page (or change to dashboard)
     return redirect('message_show', ticket_id=ticket_id)
-
 
 
 @login_required
@@ -205,3 +236,64 @@ def checklist_view(request):
         return redirect('home')  # or wherever you want
 
     return render(request, 'checklist.html', {'tasks': tasks})
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        # Validate email presence and domain
+        if not email or not email.endswith('@gmail.com'):
+            return render(request, 'forgot_password.html', {
+                'error': 'Only Gmail addresses are accepted for password reset.'
+            })
+
+        # Find users with that email
+        users = User.objects.filter(email=email)
+        count = users.count()
+
+        if count == 0:
+            # No user found
+            return render(request, 'forgot_password.html', {
+                'error': 'No user found with this Gmail address.'
+            })
+        elif count > 1:
+            # Multiple users found with same email
+            return render(request, 'forgot_password.html', {
+                'error': 'Multiple accounts found with this Gmail address. Please use another Gmail account.'
+            })
+        else:
+            # Exactly one user found
+            user = users.first()
+            # Generate a random temporary password
+            temp_password = get_random_string(10)
+            user.set_password(temp_password)
+            user.save()
+
+            # Send email with the temporary password
+            send_mail(
+                subject='Your Temporary IT Ticket System Password',
+                message=f"""Hello {user.get_full_name() or user.username},
+
+You have requested a password reset for your IT Ticket System account.
+
+Your temporary password is: {temp_password}
+
+Please log in using this password.
+
+If you didn’t request this, please contact IT support.
+
+Thank you,
+IT Department
+""",
+                from_email='itsupport@yourcompany.com',
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            # Show success message
+            return render(request, 'forgot_password.html', {
+                'success': 'Temporary password sent to your Gmail. Check your inbox.'
+            })
+
+    # If GET or other method, just render form
+    return render(request, 'forgot_password.html')

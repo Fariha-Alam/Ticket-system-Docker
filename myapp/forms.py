@@ -7,6 +7,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from .models import Ticket
+from django.contrib.auth.forms import PasswordChangeForm
 
 class SignUpForm(UserCreationForm):
     full_name = forms.CharField(
@@ -66,3 +67,21 @@ class TicketForm(forms.ModelForm):
             'attachment': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
+class ForgotPasswordForm(forms.Form):
+    email = forms.EmailField(
+        label="Enter your Gmail address",
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'example@gmail.com'}),
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email.endswith('@gmail.com'):
+            raise forms.ValidationError("Only Gmail addresses are accepted for password recovery.")
+        return email
+class SolutionForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['solution_text']
+        widgets = {
+            'solution_text': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Write your solution here...'})
+        }
