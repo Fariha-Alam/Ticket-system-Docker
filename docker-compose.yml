@@ -68,8 +68,8 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
-      - /etc/localtime:/etc/localtime:ro       # ⬅️ Add this line
-      - /etc/timezone:/etc/timezone:ro         # ⬅️ Add this line
+      - /etc/localtime:/etc/localtime:ro      
+      - /etc/timezone:/etc/timezone:ro        
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.retention.time=7d"
@@ -84,23 +84,25 @@ services:
     mem_limit: 256m
 
   mysqld-exporter:
-    image: prom/mysqld-exporter
-    environment:
-      DATA_SOURCE_NAME: root:${DB_PASSWORD}@tcp(db:3306)/
+    image: prom/mysqld-exporter:latest
     ports:
       - "9104:9104"
+    volumes:
+      - /home/fa/ticket-system/my.cnf:/.my.cnf:ro
     depends_on:
-      - db
-    restart: unless-stopped
+      db:
+         condition: service_started
 
 
   redis-exporter:
     image: oliver006/redis_exporter
-    restart: unless-stopped
     ports:
       - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis:6379
     depends_on:
-      - redis
+      -  redis
+
 
 volumes:
   db_data:
